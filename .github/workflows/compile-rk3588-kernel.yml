@@ -1,10 +1,10 @@
 #==========================================================================
-# Description: Compile stable kernel
-# Copyright (C) 2021 https://github.com/unifreq/openwrt_packit
-# Copyright (C) 2021 https://github.com/ophub/kernel
+# Description: Compile rk3588 kernel
+# Copyright (C) 2023 https://github.com/unifreq/linux-5.10.y-rk35xx
+# Copyright (C) 2023 https://github.com/ophub/kernel
 #==========================================================================
 
-name: Compile stable kernel
+name: Compile rk3588 kernel
 
 on:
   repository_dispatch:
@@ -13,23 +13,17 @@ on:
       kernel_source:
         description: "Select the kernel source"
         required: false
-        default: "TKaxv-7S"
+        default: "unifreq/linux-5.10.y-rk35xx"
         type: choice
         options:
-          - unifreq
-          - TKaxv-7S
+          - unifreq/linux-5.10.y-rk35xx
       kernel_version:
         description: "Select kernel version"
         required: false
-        default: "5.4.1_5.10.1"
+        default: "5.10.1"
         type: choice
         options:
-          - 5.4.1_5.10.1
-          - 5.15.1_6.1.1
-          - 5.4.1
           - 5.10.1
-          - 5.15.1
-          - 6.1.1
       kernel_auto:
         description: "Auto use the latest kernel"
         required: false
@@ -46,19 +40,18 @@ on:
       kernel_toolchain:
         description: "Select the compilation toolchain"
         required: false
-        default: "clang"
+        default: "gcc"
         type: choice
         options:
-          - clang
           - gcc
       kernel_sign:
         description: "Set the kernel custom signature"
         required: false
-        default: "-TKaxv_7S"
+        default: "-rk3588"
       kernel_config:
         description: "Set the path of kernel .config"
         required: false
-        default: "kernel-config/stable"
+        default: "kernel-config/rk3588"
 
 env:
   TZ: America/New_York
@@ -91,7 +84,7 @@ jobs:
           echo "status=success" >> ${GITHUB_OUTPUT}
 
       - name: Compile the kernel
-        uses: TKaxv-7S/tk-armbian@main_tk
+        uses: ophub/amlogic-s9xxx-armbian@main
         if: ${{ steps.init.outputs.status }} == 'success' && !cancelled()
         with:
           build_target: kernel
@@ -107,7 +100,7 @@ jobs:
         uses: ncipollo/release-action@main
         if: ${{ env.PACKAGED_STATUS }} == 'success' && !cancelled()
         with:
-          tag: kernel_stable
+          tag: kernel_rk3588
           artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*
           allowUpdates: true
           token: ${{ secrets.GH_TOKEN }}
@@ -115,3 +108,4 @@ jobs:
             The kernel can be used to compile Armbian and OpenWrt.
             The kernel source code comes from: ${{ inputs.kernel_source }}
             The kernel compilation toolchain: ${{ inputs.kernel_toolchain }}
+            The kernel files is a special version of the `Rockchip rk3588` series, and is not common to other series.

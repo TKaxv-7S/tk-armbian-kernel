@@ -52,7 +52,7 @@ on:
       kernel_config:
         description: "Set the path of kernel .config"
         required: false
-        default: "tool/config/h6"
+        default: "kernel-config/h6"
 
 env:
   TZ: America/New_York
